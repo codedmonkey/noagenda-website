@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
-class EpisodeTranscriptCrawler implements EpisodeFileCrawlerInterface
+class EpisodeChaptersCrawler implements EpisodeFileCrawlerInterface
 {
     use LoggerAwareTrait;
 
@@ -20,17 +20,17 @@ class EpisodeTranscriptCrawler implements EpisodeFileCrawlerInterface
 
     public function crawl(Episode $episode, \DateTime $ifModifiedSince = null): ?\DateTime
     {
-        if (!$episode->getTranscriptUri()) {
-            $this->logger->warning(sprintf('Transcript URI for episode %s is empty.', $episode->getCode()));
+        if (!$episode->getChaptersUri()) {
+            $this->logger->warning(sprintf('Chapters URI for episode %s is empty.', $episode->getCode()));
 
             return null;
         }
 
-        $path = sprintf('%s/transcripts/%s.srt', $_SERVER['APP_STORAGE_PATH'], $episode->getCode());
-        $lastModifiedAt = $this->fileDownloader->download($episode->getTranscriptUri(), $path, $ifModifiedSince);
+        $path = sprintf('%s/chapters/%s.json', $_SERVER['APP_STORAGE_PATH'], $episode->getCode());
+        $lastModifiedAt = $this->fileDownloader->download($episode->getChaptersUri(), $path, $ifModifiedSince);
 
-        if ($path !== $episode->getTranscriptPath()) {
-            $episode->setTranscriptPath($path);
+        if ($path !== $episode->getChaptersPath()) {
+            $episode->setChaptersPath($path);
 
             $this->entityManager->persist($episode);
         }

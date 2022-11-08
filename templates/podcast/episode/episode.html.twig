@@ -47,6 +47,43 @@
     </div>
   </section>
 
+  {% if chapters %}
+    <section class="section">
+      <div class="section-content">
+        <h2>Chapters</h2>
+        <div class="chapters">
+          {% for chapter in chapters %}
+            <div
+              class="chapter"
+              data-controller="chapter"
+              data-chapter-metadata-value="{{ episode|player_metadata|json_encode|e('html') }}"
+              data-chapter-timestamp-value="{{ chapter.startTime }}"
+            >
+              <div class="chapter-header">
+                <div
+                  role="button"
+                  title="Copy Link for this Chapter to the Clipboard"
+                  class="chapter-timestamp"
+                  data-clipboard-text="{{ url('podcast_episode', {code: episode.code, t: chapter.startTime|prettyTimestamp}) }}"
+                >
+                  {{ chapter.startTime|prettyTimestamp }}
+                </div>
+                <div
+                  role="button"
+                  title="Start Playing Chapter"
+                  class="chapter-title"
+                  data-action="click->chapter#play"
+                >
+                  {{ chapter.title|default('<em>Untitled</em>'|raw) }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+
   <section class="section">
     <div class="section-content">
       <h2>Propagate the Formula</h2>
